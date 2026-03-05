@@ -218,11 +218,12 @@ async function selectRound(idx){
     try{
       var tid=getTid(gel('turl').value);
       var ns=names().join(', ');
+      var tid=getTid(gel('turl').value);
+      var ns=names().join(', ');
       var resp=await pf('/Standing/GetRoundStandings',{
         method:'POST',
-        headers:{
-          'Content-Type':'application/x-www-form-urlencoded; charset=UTF-8'},
-        body:'roundId='+round.id+'&tid='+tid+'&playerNames='+encodeURIComponent(ns)
+        headers:{'Content-Type':'application/x-www-form-urlencoded; charset=UTF-8'},
+        body:'roundId='+round.id+'&tid='+tid
       });
       var text=await resp.text();
       dbg('Response ['+round.id+']:\n'+text.slice(0,800));
