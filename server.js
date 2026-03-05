@@ -149,6 +149,13 @@ const server = http.createServer(async (req, res) => {
       return;
     }
 
+    // Ping - schneller Health Check ohne Browser
+    if (path === '/ping') {
+      res.writeHead(200, { ...corsHeaders, 'Content-Type': 'text/plain' });
+      res.end('ok');
+      return;
+    }
+
     // players.txt - lese lokale Datei
     if (path === '/players.txt') {
       const filePath = __dirname + '/players.txt';

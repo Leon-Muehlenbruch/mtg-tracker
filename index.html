@@ -132,7 +132,7 @@ var PROXY='https://mtg-tracker-proxy.leonmuehlenbruch.workers.dev';
 var LOCAL='http://localhost:3333';
 async function getProxy(){
   try{
-    const r=await fetch(LOCAL+'/Tournament/View/1',{signal:AbortSignal.timeout(800)});
+    const r=await fetch(LOCAL+'/ping',{signal:AbortSignal.timeout(3000)});
     return LOCAL;
   }catch(e){return PROXY;}
 }
@@ -183,7 +183,7 @@ async function init(){
   if(!tid){st('er','Ungueltige Turnier-URL');return;}
   if(!names().length){st('er','Bitte mindestens einen Spielernamen eingeben');return;}  gel('gobtn').disabled=true;
   gel('round-section').style.display='none';
-  standingsCache={};allRounds=[];
+  standingsCache={};allRounds=[];_proxy=null;
   try{
     st('ld','Lade Turnierdaten...',true);
     var htmlResp=await pf('/Tournament/View/'+tid);
