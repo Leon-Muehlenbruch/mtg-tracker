@@ -134,7 +134,17 @@ input::placeholder{color:var(--mut)}
   </div>
 </div>
 <script>
+// Nutze lokalen Server falls verfügbar, sonst Cloudflare Worker
 var PROXY='https://mtg-tracker-proxy.leonmuehlenbruch.workers.dev';
+var LOCAL='http://localhost:3333';
+async function getProxy(){
+  try{
+    const r=await fetch(LOCAL+'/Tournament/View/1',{signal:AbortSignal.timeout(800)});
+    return LOCAL;
+  }catch(e){return PROXY;}
+}
+var _proxy=null;
+async function proxy(){if(!_proxy)_proxy=await getProxy();return _proxy;}
 var autoTimer=null,allRounds=[],standingsCache={},activeIdx=null,totalRounds=0,rid=0;
 function gel(id){return document.getElementById(id);}
 function st(t,m,s){gel('sbar').innerHTML=s?'<div class="spin"></div><span>'+m+'</span>':'<div class="sdot '+t+'"></div><span>'+m+'</span>';}
@@ -161,7 +171,7 @@ gel('turl').addEventListener('input',function(){
 
 function addRow(v){v=v||'';var c=gel('pgrid'),id=++rid,d=document.createElement('div');d.className='prow';d.id='r'+id;d.innerHTML='<input type="text" placeholder="Name (wie auf melee.gg)" value="'+esc(v)+'" onkeydown="if(event.key===\'Enter\')init()"><button class="btnx" onclick="document.getElementById(\'r'+id+'\').remove()">\u00d7</button>';c.appendChild(d);if(!v)setTimeout(function(){var inp=d.querySelector('input');if(inp)inp.focus();},10);}
 
-async function pf(path,opts){return fetch(PROXY+path,opts||{});}
+async function pf(path,opts){return fetch((await proxy())+path,opts||{});}
 
 async function init(){
   var tid=getTid(gel('turl').value);
