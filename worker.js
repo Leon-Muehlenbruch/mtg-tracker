@@ -60,12 +60,12 @@ export default {
 
     // GetRoundStandings - requires Claude API with web_search
     if (path === '/Standing/GetRoundStandings') {
-      const apiKey = request.headers.get('X-Api-Key');
-      if (!apiKey) {
-        return new Response(JSON.stringify({error: 'Missing X-Api-Key header'}), {
-          status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-        });
-      }
+      // Kein API Key mehr nötig - lokaler Server erforderlich
+      return new Response(JSON.stringify({
+        error: true,
+        Message: 'Bitte MTG-Tracker-Starten.command ausführen (lokaler Server benötigt)'
+      }), { status: 503, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+      const apiKey = null; // unused
 
       let roundId, playerNames, tid;
       if (request.method === 'POST') {
