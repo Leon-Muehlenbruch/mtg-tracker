@@ -6,17 +6,10 @@
 <title>MTG Tournament Tracker</title>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
 <style>
-:root {
-  --gold:#c9a84c; --gold-l:#e8c97a; --gold-d:#8b6914;
-  --bg:#0a0a0f; --s1:#111118; --s2:#1a1a24;
-  --bdr:rgba(201,168,76,.22); --txt:#e8e0d0; --mut:#7a7060;
-  --win:#4caf82; --loss:#cf6679; --draw:#7a9ccf; --warn:#e8a84c;
-}
+:root{--gold:#c9a84c;--gold-l:#e8c97a;--gold-d:#8b6914;--bg:#0a0a0f;--s1:#111118;--s2:#1a1a24;--bdr:rgba(201,168,76,.22);--txt:#e8e0d0;--mut:#7a7060;--win:#4caf82;--loss:#cf6679;--draw:#7a9ccf}
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--txt);font-family:'Crimson Pro',Georgia,serif;min-height:100vh}
-body::before{content:'';position:fixed;inset:0;pointer-events:none;
-  background:radial-gradient(ellipse at 15% 15%,rgba(201,168,76,.05) 0%,transparent 55%),
-             radial-gradient(ellipse at 85% 85%,rgba(80,40,160,.06) 0%,transparent 55%)}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;background:radial-gradient(ellipse at 15% 15%,rgba(201,168,76,.05) 0%,transparent 55%),radial-gradient(ellipse at 85% 85%,rgba(80,40,160,.06) 0%,transparent 55%)}
 .wrap{position:relative;z-index:1;max-width:960px;margin:0 auto;padding:36px 18px 80px}
 header{text-align:center;margin-bottom:38px}
 .orn{display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:10px}
@@ -31,18 +24,17 @@ h1{font-family:'Cinzel',serif;font-size:clamp(1.7rem,4.5vw,2.5rem);font-weight:9
 input[type=text]{background:var(--s2);border:1px solid var(--bdr);border-radius:2px;color:var(--txt);font-family:'Crimson Pro',serif;font-size:.95rem;padding:8px 12px;outline:none;transition:border-color .2s;width:100%}
 input[type=text]:focus{border-color:var(--gold)}
 input[type=text]::placeholder{color:var(--mut)}
-.row-url{display:flex;gap:8px;margin-bottom:16px}
-.row-url input{flex:1}
+.row-url{display:flex;gap:8px;margin-bottom:16px}.row-url input{flex:1}
 .pgrid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
 @media(max-width:540px){.pgrid{grid-template-columns:1fr}}
 .prow{display:flex;gap:5px}.prow input{flex:1}
 .btnx{background:transparent;border:1px solid rgba(207,102,121,.2);color:var(--mut);width:30px;flex-shrink:0;cursor:pointer;border-radius:2px;font-size:.95rem;transition:all .15s}
 .btnx:hover{background:rgba(207,102,121,.15);color:var(--loss)}
 .ctrl{display:flex;align-items:center;gap:12px;margin-top:14px;flex-wrap:wrap}
-.btnadd{background:transparent;border:1px solid var(--bdr);color:var(--gold);font-family:'Cinzel',serif;font-size:.67rem;letter-spacing:.1em;padding:8px 14px;cursor:pointer;border-radius:2px;transition:all .15s}
+.btnadd{background:transparent;border:1px solid var(--bdr);color:var(--gold);font-family:'Cinzel',serif;font-size:.67rem;letter-spacing:.1em;padding:8px 14px;cursor:pointer;border-radius:2px}
 .btnadd:hover{background:rgba(201,168,76,.1)}
-.btngo{background:linear-gradient(135deg,var(--gold-d),var(--gold));border:none;color:var(--bg);font-family:'Cinzel',serif;font-size:.76rem;font-weight:700;letter-spacing:.14em;padding:10px 24px;cursor:pointer;border-radius:2px;transition:all .2s}
-.btngo:hover:not(:disabled){filter:brightness(1.1);box-shadow:0 4px 18px rgba(201,168,76,.3)}
+.btngo{background:linear-gradient(135deg,var(--gold-d),var(--gold));border:none;color:var(--bg);font-family:'Cinzel',serif;font-size:.76rem;font-weight:700;letter-spacing:.14em;padding:10px 24px;cursor:pointer;border-radius:2px}
+.btngo:hover:not(:disabled){filter:brightness(1.1)}
 .btngo:disabled{opacity:.45;cursor:not-allowed}
 .autolbl{display:flex;align-items:center;gap:6px;font-size:.85rem;color:var(--mut);cursor:pointer}
 .autolbl input{accent-color:var(--gold)}
@@ -51,25 +43,13 @@ input[type=text]::placeholder{color:var(--mut)}
 .spin{width:13px;height:13px;border:2px solid rgba(201,168,76,.2);border-top-color:var(--gold);border-radius:50%;animation:sp .8s linear infinite;flex-shrink:0}
 @keyframes sp{to{transform:rotate(360deg)}}
 .sdot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
-.sdot.ok{background:var(--win)}.sdot.er{background:var(--loss)}.sdot.id{background:var(--mut)}.sdot.ld{background:var(--warn)}
-
-/* Step hint */
-.hint{background:rgba(201,168,76,.06);border:1px solid rgba(201,168,76,.2);border-radius:2px;padding:14px 18px;margin-bottom:14px;font-size:.87rem;line-height:1.6;display:none}
-.hint.show{display:block}
-.hint a{color:var(--gold);text-decoration:underline;text-underline-offset:2px}
-.hint strong{color:var(--gold-l)}
-.step{font-family:'Cinzel',serif;font-size:.65rem;letter-spacing:.12em;color:var(--gold);margin-bottom:5px}
-
-/* Round tabs */
+.sdot.ok{background:var(--win)}.sdot.er{background:var(--loss)}.sdot.id{background:var(--mut)}.sdot.ld{background:#e8a84c}
 .round-section{margin-bottom:18px;display:none}
 .round-lbl{font-family:'Cinzel',serif;font-size:.64rem;letter-spacing:.18em;color:var(--mut);text-transform:uppercase;margin-bottom:8px}
 .rtabs{display:flex;gap:5px;flex-wrap:wrap}
-.rtab{font-family:'Cinzel',serif;font-size:.64rem;letter-spacing:.09em;padding:6px 11px;border:1px solid var(--bdr);background:transparent;color:var(--mut);cursor:pointer;border-radius:2px;transition:all .15s;white-space:nowrap}
-.rtab:hover{border-color:var(--gold);color:var(--gold)}
+.rtab{font-family:'Cinzel',serif;font-size:.64rem;letter-spacing:.09em;padding:6px 11px;border:1px solid var(--bdr);background:transparent;color:var(--mut);cursor:pointer;border-radius:2px;white-space:nowrap}
 .rtab.done{color:var(--txt);border-color:rgba(201,168,76,.38)}
 .rtab.active{background:rgba(201,168,76,.14);border-color:var(--gold);color:var(--gold-l)}
-
-/* Player cards */
 .cards{display:grid;gap:11px}
 .pcard{background:var(--s1);border:1px solid var(--bdr);border-radius:2px;overflow:hidden;animation:fu .3s ease forwards;opacity:0;transform:translateY(8px)}
 @keyframes fu{to{opacity:1;transform:translateY(0)}}
@@ -89,7 +69,6 @@ input[type=text]::placeholder{color:var(--mut)}
 .mi{display:flex;flex-direction:column;gap:1px}
 .mk{font-family:'Cinzel',serif;font-size:.58rem;letter-spacing:.12em;color:var(--mut);text-transform:uppercase}
 .mv{font-weight:600}
-.mvw{color:var(--win)}.mvl{color:var(--loss)}.mvd{color:var(--draw)}
 .hist{margin-top:8px;display:flex;gap:3px;flex-wrap:wrap}
 .pip{width:18px;height:18px;border-radius:2px;display:flex;align-items:center;justify-content:center;font-size:.57rem;font-weight:700;font-family:'Cinzel',serif}
 .pip.W{background:rgba(76,175,130,.16);color:var(--win);border:1px solid rgba(76,175,130,.32)}
@@ -99,8 +78,7 @@ input[type=text]::placeholder{color:var(--mut)}
 .nf{padding:12px 18px;font-style:italic;color:var(--mut);font-size:.87rem}
 .empty-state{text-align:center;padding:50px 20px;color:var(--mut)}
 .empty-ico{font-size:2.4rem;margin-bottom:10px;opacity:.3}
-.dbgbtn{font-size:.68rem;color:var(--mut);background:none;border:none;cursor:pointer;text-decoration:underline;text-underline-offset:2px}
-.dbgbtn:hover{color:var(--gold)}
+.dbgbtn{font-size:.68rem;color:var(--mut);background:none;border:none;cursor:pointer;text-decoration:underline}
 .dbgbox{display:none;background:var(--s2);border:1px solid rgba(201,168,76,.1);border-radius:2px;padding:10px 14px;margin-bottom:12px;font-family:monospace;font-size:.71rem;color:var(--mut);max-height:200px;overflow-y:auto;white-space:pre-wrap;word-break:break-all}
 .dbgbox.on{display:block}
 </style>
@@ -110,19 +88,10 @@ input[type=text]::placeholder{color:var(--mut)}
   <header>
     <div class="orn"><div class="oline"></div><div class="diam"></div><div class="oline"></div></div>
     <h1>MTG TOURNAMENT TRACKER</h1>
-    <div class="sub">Live Standings · melee.gg</div>
-    <div class="tid" id="tid-lbl">Turin RC 2026 · #392336</div>
+    <div class="sub">Live Standings &middot; melee.gg</div>
+    <div class="tid" id="tid-lbl">Turin RC 2026 &middot; #392336</div>
     <div class="orn" style="margin-top:10px"><div class="oline"></div><div class="diam"></div><div class="oline"></div></div>
   </header>
-
-  <!-- Step 1: Session hint -->
-  <div class="hint show" id="hint-session">
-    <div class="step">SCHRITT 1 — EINMALIG PRO SITZUNG</div>
-    Öffne zuerst das Turnier auf melee.gg (damit dein Browser die nötige Session bekommt), dann kehre hierher zurück:<br><br>
-    <strong>→ <a id="melee-link" href="https://melee.gg/Tournament/View/392336" target="_blank">Turnier auf melee.gg öffnen ↗</a></strong><br><br>
-    Danach oben die Spielernamen eingeben und „Laden" klicken.
-  </div>
-
   <div class="panel">
     <div class="lbl">Turnier URL</div>
     <div class="row-url">
@@ -132,292 +101,122 @@ input[type=text]::placeholder{color:var(--mut)}
     <div class="pgrid" id="pgrid"></div>
     <div class="ctrl">
       <button class="btnadd" onclick="addRow()">+ Spieler</button>
-      <button class="btngo" id="gobtn" onclick="init()">⚔ Laden</button>
+      <button class="btngo" id="gobtn" onclick="init()">Laden</button>
       <label class="autolbl"><input type="checkbox" id="autocb" onchange="toggleAuto()"> Auto (5min)</label>
       <span class="ts" id="ts"></span>
-      <button class="dbgbtn" onclick="$('dbgbox').classList.toggle('on')">debug</button>
+      <button class="dbgbtn" onclick="document.getElementById('dbgbox').classList.toggle('on')">debug</button>
     </div>
   </div>
-
   <div class="dbgbox" id="dbgbox"></div>
-  <div class="sbar" id="sbar"><div class="sdot id"></div><span>Turnier-URL und Spielernamen eingeben, dann „Laden" klicken</span></div>
-
+  <div class="sbar" id="sbar"><div class="sdot id"></div><span>Turnier-URL und Spielernamen eingeben, dann Laden klicken</span></div>
   <div class="round-section" id="round-section">
-    <div class="round-lbl">Runde wählen</div>
+    <div class="round-lbl">Runde</div>
     <div class="rtabs" id="rtabs"></div>
   </div>
-
   <div class="cards" id="cards">
-    <div class="empty-state"><div class="empty-ico">⚔</div><p>Noch keine Daten geladen</p></div>
+    <div class="empty-state"><div class="empty-ico">&#9876;</div><p>Noch keine Daten geladen</p></div>
   </div>
 </div>
-
 <script>
-const MELEE = 'https://melee.gg';
-let rid=0, autoTimer=null, allRounds=[], standingsCache={}, activeIdx=null, totalRoundsInPhase=0;
-const $=id=>document.getElementById(id);
-function st(type,msg,spin=false){$('sbar').innerHTML=spin?`<div class="spin"></div><span>${msg}</span>`:`<div class="sdot ${type}"></div><span>${msg}</span>`}
-function dbg(s){$('dbgbox').textContent=typeof s==='object'?JSON.stringify(s,null,2).slice(0,3000):String(s).slice(0,3000)}
-function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
-function getTid(url){const m=url.trim().match(/\/(\d+)\/?$/);return m?m[1]:null}
-function names(){return[...document.querySelectorAll('#pgrid input[type=text]')].map(i=>i.value.trim()).filter(Boolean)}
-
-$('turl').addEventListener('input', () => {
-  const id = getTid($('turl').value);
-  const map={'392336':'Turin RC 2026','392401':'Lyon Spotlight 2026'};
-  if(id){
-    $('tid-lbl').textContent=`${map[id]||'Turnier'} · #${id}`;
-    $('melee-link').href=`${MELEE}/Tournament/View/${id}`;
-    $('melee-link').textContent=`Turnier #${id} auf melee.gg öffnen ↗`;
-  }
-});
-
-function addRow(v=''){
-  const c=$('pgrid'),id=++rid,d=document.createElement('div');
-  d.className='prow';d.id=`r${id}`;
-  d.innerHTML=`<input type="text" placeholder="Name (wie auf melee.gg)" value="${esc(v)}" onkeydown="if(event.key==='Enter')init()"><button class="btnx" onclick="document.getElementById('r${id}').remove()">×</button>`;
-  c.appendChild(d);
-  if(!v)setTimeout(()=>d.querySelector('input')?.focus(),10);
-}
-
-// ── Fetch with credentials (uses browser cookies!) ────────────────────
-async function meleeFetch(path, opts={}) {
-  const url = MELEE + path;
-  const resp = await fetch(url, {
-    credentials: 'include',  // ← Das ist der Schlüssel: Browser-Cookies werden mitgeschickt
-    headers: {
-      'Accept': 'application/json, text/javascript, */*; q=0.01',
-      'X-Requested-With': 'XMLHttpRequest',
-      'Referer': MELEE + '/Tournament/View/' + (getTid($('turl').value) || ''),
-    },
-    ...opts
-  });
-  return resp;
-}
-
-// ── Step 1: Get round list from Tournament HTML page ──────────────────
-async function fetchRounds(tid) {
-  // Holt die öffentliche HTML-Seite (kein Auth nötig)
-  // Wir können die Tournament-Seite nicht direkt fetchen (CORS),
-  // aber wir nutzen GetStandingsConfig welches public ist
-  const cfgResp = await fetch(`${MELEE}/Standing/GetStandingsConfig/${tid}`, {
-    credentials: 'include',
-    headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
-  });
-  if (!cfgResp.ok) throw new Error(`GetStandingsConfig HTTP ${cfgResp.status}`);
-  const cfg = await cfgResp.json();
-  dbg('Config: ' + JSON.stringify(cfg, null, 2));
-  return cfg;
-}
-
-// ── Main flow ────────────────────────────────────────────────────────
-async function init() {
-  const url = $('turl').value.trim();
-  const tid = getTid(url);
-  if (!tid) { st('er','Ungültige Turnier-URL'); return; }
-  if (!names().length) { st('er','Bitte mindestens einen Spielernamen eingeben'); return; }
-
-  $('gobtn').disabled = true;
-  $('round-section').style.display = 'none';
-  $('hint-session').classList.remove('show');
-  standingsCache = {}; allRounds = [];
-
-  try {
-    // Hol die HTML-Seite um Round-IDs zu extrahieren
-    st('ld', 'Lade Turnierdaten…', true);
-
-    // GetStandingsConfig ist öffentlich
-    await fetchRounds(tid);
-
-    // Hol die Runden via HTML-Seite (direkt fetchen mit credentials)
-    const htmlResp = await fetch(`${MELEE}/Tournament/View/${tid}`, {
-      credentials: 'include',
-      headers: { 'Accept': 'text/html', 'Referer': MELEE + '/' }
-    });
-
-    if (!htmlResp.ok) throw new Error(`HTML fetch HTTP ${htmlResp.status}`);
-    const html = await htmlResp.text();
-
-    // Extract round buttons from HTML
-    const roundPattern = /data-id="(\d+)"\s+data-name="([^"]+)"\s+data-is-completed="([^"]+)"/g;
-    let match;
-    while ((match = roundPattern.exec(html)) !== null) {
-      allRounds.push({
-        id: match[1],
-        label: match[2],
-        done: match[3].toLowerCase() === 'true'
-      });
-    }
-
-    dbg(`Found ${allRounds.length} rounds from HTML\n` + JSON.stringify(allRounds.slice(0,5)));
-
-    if (!allRounds.length) {
-      st('id', 'Keine Runden gefunden — Turnier hat noch nicht begonnen');
-      $('cards').innerHTML = `<div class="empty-state"><div class="empty-ico">⏳</div><p>Das Turnier hat noch keine abgeschlossenen Runden</p></div>`;
-      return;
-    }
-
-    totalRoundsInPhase = allRounds.length;
-    renderRoundTabs();
-    $('round-section').style.display = 'block';
-
-    // Letzte abgeschlossene Runde wählen
-    const latestDone = allRounds.reduce((best, r, i) => r.done ? i : best, 0);
+var PROXY='https://mtg-tracker-proxy.leonmuehlenbruch.workers.dev';
+var autoTimer=null,allRounds=[],standingsCache={},activeIdx=null,totalRounds=0,rid=0;
+function gel(id){return document.getElementById(id);}
+function st(type,msg,spin){gel('sbar').innerHTML=spin?'<div class="spin"></div><span>'+msg+'</span>':'<div class="sdot '+type+'"></div><span>'+msg+'</span>';}
+function dbg(s){gel('dbgbox').textContent=(typeof s==='object'?JSON.stringify(s,null,2):String(s)).slice(0,3000);}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function getTid(url){var m=(url||'').trim().match(/\/(\d+)\/?$/);return m?m[1]:null;}
+function names(){return Array.from(document.querySelectorAll('#pgrid input[type=text]')).map(function(i){return i.value.trim();}).filter(Boolean);}
+gel('turl').addEventListener('input',function(){var id=getTid(gel('turl').value);var map={'392336':'Turin RC 2026','392401':'Lyon Spotlight 2026'};if(id)gel('tid-lbl').textContent=(map[id]||'Turnier')+' \u00b7 #'+id;});
+function addRow(v){v=v||'';var c=gel('pgrid'),id=++rid,d=document.createElement('div');d.className='prow';d.id='r'+id;d.innerHTML='<input type="text" placeholder="Name (wie auf melee.gg)" value="'+esc(v)+'" onkeydown="if(event.key===\'Enter\')init()"><button class="btnx" onclick="document.getElementById(\'r'+id+'\').remove()">\u00d7</button>';c.appendChild(d);if(!v)setTimeout(function(){var inp=d.querySelector('input');if(inp)inp.focus();},10);}
+async function pf(path,opts){return fetch(PROXY+path,opts||{});}
+async function init(){
+  var tid=getTid(gel('turl').value);
+  if(!tid){st('er','Ungueltige Turnier-URL');return;}
+  if(!names().length){st('er','Bitte mindestens einen Spielernamen eingeben');return;}
+  gel('gobtn').disabled=true;
+  gel('round-section').style.display='none';
+  standingsCache={};allRounds=[];
+  try{
+    st('ld','Lade Turnierdaten...',true);
+    var htmlResp=await pf('/Tournament/View/'+tid);
+    if(!htmlResp.ok)throw new Error('Tournament page HTTP '+htmlResp.status);
+    var html=await htmlResp.text();
+    dbg('HTML length: '+html.length);
+    var pat=/data-id="(\d+)"\s+data-name="([^"]+)"\s+data-is-completed="([^"]+)"/g,m;
+    while((m=pat.exec(html))!==null)allRounds.push({id:m[1],label:m[2],done:m[3].toLowerCase()==='true'});
+    dbg('Rounds: '+allRounds.length+'\n'+allRounds.map(function(r){return r.id+' '+r.label;}).join('\n'));
+    if(!allRounds.length){st('id','Keine Runden - Turnier hat noch nicht begonnen');gel('cards').innerHTML='<div class="empty-state"><div class="empty-ico">&#8987;</div><p>Das Turnier hat noch nicht begonnen</p></div>';return;}
+    var playoffs=['Quarterfinals','Semifinals','Finals'];
+    totalRounds=allRounds.filter(function(r){return!playoffs.includes(r.label);}).length;
+    renderTabs();
+    gel('round-section').style.display='block';
+    var latestDone=0;allRounds.forEach(function(r,i){if(r.done)latestDone=i;});
     await selectRound(latestDone);
-    $('ts').textContent = `Stand: ${new Date().toLocaleTimeString('de-DE')}`;
-
-  } catch(e) {
-    const msg = e.message || String(e);
-    // Wenn CORS-Fehler → zeige Session-Hint
-    if (msg.includes('Failed to fetch') || msg.includes('NetworkError') || msg.includes('CORS')) {
-      st('er', 'Browser-Session fehlt — öffne das Turnier zuerst auf melee.gg (siehe Hinweis)');
-      $('hint-session').classList.add('show');
-    } else {
-      st('er', `Fehler: ${msg}`);
-    }
-    dbg('Error: ' + msg + '\n' + (e.stack||''));
-    $('cards').innerHTML = `<div class="empty-state"><div class="empty-ico">⚠</div><p>${esc(msg)}</p></div>`;
-  } finally {
-    $('gobtn').disabled = false;
-  }
+    gel('ts').textContent='Stand: '+new Date().toLocaleTimeString('de-DE');
+  }catch(e){
+    st('er','Fehler: '+e.message);
+    dbg('Error: '+e.message+'\n'+(e.stack||''));
+    gel('cards').innerHTML='<div class="empty-state"><div class="empty-ico">&#9888;</div><p>'+esc(e.message)+'</p></div>';
+  }finally{gel('gobtn').disabled=false;}
 }
-
-function renderRoundTabs() {
-  $('rtabs').innerHTML = allRounds.map((r,i) =>
-    `<button class="rtab ${r.done?'done':''}" id="rtab${i}" onclick="selectRound(${i})">${esc(r.label)}</button>`
-  ).join('');
-}
-
-async function selectRound(idx) {
-  activeIdx = idx;
-  document.querySelectorAll('.rtab').forEach((el,i) => el.classList.toggle('active', i===idx));
-
-  const round = allRounds[idx];
-
-  if (!standingsCache[round.id]) {
-    st('ld', `Lade Standings · ${round.label}…`, true);
-    try {
-      // POST zu GetRoundStandings mit Browser-Session
-      const resp = await fetch(`${MELEE}/Standing/GetRoundStandings`, {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-          'Accept': 'application/json, text/javascript, */*; q=0.01',
-          'X-Requested-With': 'XMLHttpRequest',
-          'Referer': `${MELEE}/Tournament/View/${getTid($('turl').value)}`,
-        },
-        body: `draw=1&start=0&length=3000&order%5B0%5D%5Bcolumn%5D=0&order%5B0%5D%5Bdir%5D=asc&roundId=${round.id}`
-      });
-
-      const data = await resp.json();
-      dbg('Standings response:\n' + JSON.stringify(data).slice(0, 1000));
-
-      if (data.Error) throw new Error(data.Message || 'melee.gg API Fehler');
-      
-      // DataTables format: { data: [...], recordsTotal: N }
-      standingsCache[round.id] = data.data || data.Data || data;
-
-    } catch(e) {
-      st('er', `Fehler: ${e.message}`);
-      if (e.message.includes('Failed to fetch')) {
-        st('er', 'Session abgelaufen — öffne das Turnier erneut auf melee.gg');
-        $('hint-session').classList.add('show');
-      }
-      dbg('Standings error: ' + e.message);
-      return;
-    }
+function renderTabs(){gel('rtabs').innerHTML=allRounds.map(function(r,i){return'<button class="rtab'+(r.done?' done':'')+'" id="rtab'+i+'" onclick="selectRound('+i+')">'+esc(r.label)+'</button>';}).join('');}
+async function selectRound(idx){
+  activeIdx=idx;
+  document.querySelectorAll('.rtab').forEach(function(el,i){el.classList.toggle('active',i===idx);});
+  var round=allRounds[idx];
+  if(!standingsCache[round.id]){
+    st('ld','Lade Standings \u00b7 '+round.label+'...',true);
+    try{
+      var resp=await pf('/Standing/GetRoundStandings',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded; charset=UTF-8'},body:'draw=1&start=0&length=3000&order%5B0%5D%5Bcolumn%5D=0&order%5B0%5D%5Bdir%5D=asc&roundId='+round.id});
+      var text=await resp.text();
+      dbg('Standings ['+round.id+']:\n'+text.slice(0,600));
+      var data;try{data=JSON.parse(text);}catch(e2){throw new Error('Kein JSON: '+text.slice(0,100));}
+      if(data.Error)throw new Error(data.Message||'melee.gg API Fehler');
+      standingsCache[round.id]=data.data||data.Data||[];
+    }catch(e){st('er','Fehler: '+e.message);dbg('Standings error: '+e.message);return;}
   }
-
   renderCards(round);
 }
-
-// ── Render ────────────────────────────────────────────────────────────
-function renderCards(round) {
-  const standings = standingsCache[round.id] || [];
-  const watched = names().map(n => n.toLowerCase().trim());
-
-  if (!standings.length) {
-    st('id', `${round.label}: Noch keine Standings`);
-    $('cards').innerHTML = `<div class="empty-state"><div class="empty-ico">⏳</div><p>Keine Daten für ${esc(round.label)}</p></div>`;
-    return;
-  }
-
-  const results = watched.map(wname => {
-    const hit = standings.find(s => {
-      const n = pName(s).toLowerCase();
-      return n === wname || n.includes(wname) || wname.includes(n)
-        || (n.split(' ').pop() === wname.split(' ').pop() && wname.split(' ').pop().length > 2);
-    });
-    return { wname, standing: hit || null };
-  });
-
-  const found = results.filter(r => r.standing).length;
-  st('ok', `${round.label} · ${found}/${watched.length} Spieler · ${standings.length} total`);
-  $('cards').innerHTML = results.map((r,i) => playerCard(r, i, round)).join('');
-  $('hint-session').classList.remove('show');
+function renderCards(round){
+  var standings=standingsCache[round.id]||[];
+  var watched=names().map(function(n){return n.toLowerCase().trim();});
+  if(!standings.length){st('id',round.label+': Noch keine Standings');gel('cards').innerHTML='<div class="empty-state"><p>Keine Daten fuer '+esc(round.label)+'</p></div>';return;}
+  var results=watched.map(function(wname){var hit=standings.find(function(s){var n=getName(s).toLowerCase();return n===wname||n.includes(wname)||wname.includes(n)||(n.split(' ').pop()===wname.split(' ').pop()&&wname.split(' ').pop().length>2);});return{wname:wname,standing:hit||null};});
+  var found=results.filter(function(r){return r.standing;}).length;
+  st('ok',round.label+' \u00b7 '+found+'/'+watched.length+' Spieler \u00b7 '+standings.length+' Teilnehmer');
+  gel('cards').innerHTML=results.map(function(r,i){return makeCard(r,i,round);}).join('');
 }
-
-function pName(s) {
-  // melee.gg DataTables format: Players array or direct fields
-  if (s.Team?.Players?.[0]) return s.Team.Players[0].DisplayName || s.Team.Players[0].Name || '';
-  if (s.Players?.[0]) return s.Players[0].DisplayName || s.Players[0].Name || '';
-  return s.Name || s.PlayerName || s.DisplayName || s.TeamName || '';
+function getName(s){if(s.Team&&s.Team.Players&&s.Team.Players[0])return s.Team.Players[0].DisplayName||s.Team.Players[0].Name||'';if(s.Players&&s.Players[0])return s.Players[0].DisplayName||s.Players[0].Name||'';return s.Name||s.PlayerName||s.DisplayName||s.TeamName||'';}
+function makeCard(obj,idx,round){
+  var wname=obj.wname,s=obj.standing,delay=idx*60;
+  if(!s)return'<div class="pcard" style="animation-delay:'+delay+'ms"><div class="pch"><div class="pn">'+esc(wname)+'</div></div><div class="nf">Nicht in '+esc(round.label)+' gefunden</div></div>';
+  var name=getName(s);
+  var rank=s.Rank!=null?s.Rank:(s.Place!=null?s.Place:null);
+  var pts=s.Points!=null?s.Points:(s.MatchPoints!=null?s.MatchPoints:null);
+  var mr=s.MatchRecord||'',gr=s.GameRecord||'';
+  var parts=mr.split('-').map(Number);
+  var wins=isNaN(parts[0])?(s.Wins||0):(parts[0]||0);
+  var losses=isNaN(parts[1])?(s.Losses||0):(parts[1]||0);
+  var draws=isNaN(parts[2])?(s.Draws||0):(parts[2]||0);
+  var omwp=s.OpponentMatchWinPercentage!=null?s.OpponentMatchWinPercentage:null;
+  var gwp=s.TeamGameWinPercentage!=null?s.TeamGameWinPercentage:(s.GameWinPercentage!=null?s.GameWinPercentage:null);
+  var ogwp=s.OpponentGameWinPercentage!=null?s.OpponentGameWinPercentage:null;
+  var adv=s.AdvancedToNextPhase||false;
+  var dayBadge=adv?'<span class="b bd2">Tag 2 &#10003;</span>':losses>=3?'<span class="b bout">Ausgeschieden</span>':'<span class="b bd1">Tag 1</span>';
+  var hist=[];for(var i=0;i<wins;i++)hist.push('W');for(var i=0;i<losses;i++)hist.push('L');for(var i=0;i<draws;i++)hist.push('D');
+  var pips=hist.map(function(r){return'<div class="pip '+r+'">'+r+'</div>';}).join('');
+  var pending='';for(var i=0;i<Math.max(0,totalRounds-hist.length);i++)pending+='<div class="pip-cur"></div>';
+  var meta='';
+  if(pts!=null)meta+='<div class="mi"><span class="mk">Punkte</span><span class="mv">'+pts+'</span></div>';
+  if(mr)meta+='<div class="mi"><span class="mk">Match Record</span><span class="mv">'+esc(mr)+'</span></div>';
+  if(gr)meta+='<div class="mi"><span class="mk">Game Record</span><span class="mv">'+esc(gr)+'</span></div>';
+  if(omwp!=null)meta+='<div class="mi"><span class="mk">OMW%</span><span class="mv">'+(omwp*100).toFixed(1)+'%</span></div>';
+  if(gwp!=null)meta+='<div class="mi"><span class="mk">GW%</span><span class="mv">'+(gwp*100).toFixed(1)+'%</span></div>';
+  if(ogwp!=null)meta+='<div class="mi"><span class="mk">OGW%</span><span class="mv">'+(ogwp*100).toFixed(1)+'%</span></div>';
+  return'<div class="pcard" style="animation-delay:'+delay+'ms"><div class="pch"><div><div class="pn">'+esc(name)+'</div>'+(rank!=null?'<div class="pr">Rang #'+rank+'</div>':'')+'</div><div class="bdgs">'+dayBadge+'<span class="b bw">'+wins+'W</span><span class="b bl">'+losses+'L</span>'+(draws>0?'<span class="b bdr2">'+draws+'D</span>':'')+'</div></div><div class="pcb">'+(meta?'<div class="meta">'+meta+'</div>':'')+((pips||pending)?'<div class="hist">'+pips+pending+'</div>':'')+'</div></div>';
 }
-
-function playerCard({wname, standing}, idx, round) {
-  const delay = idx * 60;
-  if (!standing) return `<div class="pcard" style="animation-delay:${delay}ms">
-    <div class="pch"><div><div class="pn">${esc(wname)}</div></div></div>
-    <div class="nf">Nicht in ${esc(round.label)} gefunden — prüfe Schreibweise</div></div>`;
-
-  const s = standing;
-  const name = pName(s);
-  const rank = s.Rank ?? s.Place ?? null;
-  const pts  = s.Points ?? s.MatchPoints ?? null;
-  const mr   = s.MatchRecord || '';  // z.B. "7-2-0"
-  const gr   = s.GameRecord || '';
-  const parts = mr.split('-').map(Number);
-  const wins   = parts[0] || s.Wins || 0;
-  const losses = parts[1] || s.Losses || 0;
-  const draws  = parts[2] || s.Draws || 0;
-  const omwp = s.OpponentMatchWinPercentage ?? null;
-  const gwp  = s.TeamGameWinPercentage ?? s.GameWinPercentage ?? null;
-  const ogwp = s.OpponentGameWinPercentage ?? null;
-  const adv  = s.AdvancedToNextPhase ?? false;
-
-  const dayBadge = adv ? `<span class="b bd2">Tag 2 ✓</span>`
-    : losses >= 3 ? `<span class="b bout">Ausgeschieden</span>`
-    : `<span class="b bd1">Tag 1</span>`;
-
-  const histArr = [...Array(wins).fill('W'), ...Array(losses).fill('L'), ...Array(draws).fill('D')];
-  const pips = histArr.map(r => `<div class="pip ${r}">${r}</div>`).join('');
-  const pending = Array(Math.max(0, totalRoundsInPhase - histArr.length)).fill(0).map(() => `<div class="pip-cur"></div>`).join('');
-
-  return `<div class="pcard" style="animation-delay:${delay}ms">
-    <div class="pch">
-      <div><div class="pn">${esc(name)}</div>${rank!=null?`<div class="pr">Rang #${rank}</div>`:''}</div>
-      <div class="bdgs">${dayBadge}<span class="b bw">${wins}W</span><span class="b bl">${losses}L</span>${draws>0?`<span class="b bdr2">${draws}D</span>`:''}</div>
-    </div>
-    <div class="pcb">
-      <div class="meta">
-        ${pts!=null?`<div class="mi"><span class="mk">Punkte</span><span class="mv">${pts}</span></div>`:''}
-        ${mr?`<div class="mi"><span class="mk">Match Record</span><span class="mv">${esc(mr)}</span></div>`:''}
-        ${gr?`<div class="mi"><span class="mk">Game Record</span><span class="mv">${esc(gr)}</span></div>`:''}
-        ${omwp!=null?`<div class="mi"><span class="mk">OMW%</span><span class="mv">${(omwp*100).toFixed(1)}%</span></div>`:''}
-        ${gwp!=null?`<div class="mi"><span class="mk">GW%</span><span class="mv">${(gwp*100).toFixed(1)}%</span></div>`:''}
-        ${ogwp!=null?`<div class="mi"><span class="mk">OGW%</span><span class="mv">${(ogwp*100).toFixed(1)}%</span></div>`:''}
-      </div>
-      ${(pips||pending)?`<div class="hist">${pips}${pending}</div>`:''}
-    </div></div>`;
-}
-
-function toggleAuto() {
-  if ($('autocb').checked) { autoTimer = setInterval(() => { if(names().length){standingsCache={};init()} }, 5*60*1000); }
-  else clearInterval(autoTimer);
-}
-
-addRow(); addRow(); addRow();
+function toggleAuto(){clearInterval(autoTimer);if(gel('autocb').checked)autoTimer=setInterval(function(){if(names().length){standingsCache={};init();}},300000);}
+addRow();addRow();addRow();
 </script>
 </body>
 </html>
