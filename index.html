@@ -134,11 +134,15 @@ async function loadPlayersFromFile(){
   }catch(e){return false;}
 }
 
-gel('turl').addEventListener('input',function(){
-  var id=getTid(gel('turl').value);
-  var map={'392336':'Turin RC 2026','392401':'Lyon Spotlight 2026'};
-  if(id)gel('tid-lbl').textContent=(map[id]||'Turnier')+' \u00b7 #'+id;
-});
+// turl listener wird nach DOM-Ready gesetzt (siehe IIFE unten)
+function setupUrlListener(){
+  gel('turl').addEventListener('input',function(){
+    var id=getTid(gel('turl').value);
+    var map={'392336':'Turin RC 2026','392401':'Lyon Spotlight 2026'};
+    if(id)gel('tid-lbl').textContent=(map[id]||'Turnier')+' \u00b7 #'+id;
+    localStorage.setItem('turl',gel('turl').value);
+  });
+}
 
 function addRow(v){v=v||'';var c=gel('pgrid'),id=++rid,d=document.createElement('div');d.className='prow';d.id='r'+id;d.innerHTML='<input type="text" placeholder="Name (wie auf melee.gg)" value="'+esc(v)+'" onkeydown="if(event.key===\'Enter\')init()"><button class="btnx" onclick="document.getElementById(\'r'+id+'\').remove()">\u00d7</button>';c.appendChild(d);if(!v)setTimeout(function(){var inp=d.querySelector('input');if(inp)inp.focus();},10);}
 
@@ -244,6 +248,7 @@ function makeCard(obj,idx,round){
 function toggleAuto(){clearInterval(autoTimer);if(gel('autocb').checked)autoTimer=setInterval(function(){if(names().length){standingsCache={};init();}},300000);}
 
 (async function(){
+  setupUrlListener();
   var su=localStorage.getItem('turl');
   if(su){gel('turl').value=su;gel('turl').dispatchEvent(new Event('input'));}
   var loaded=await loadPlayersFromFile();
