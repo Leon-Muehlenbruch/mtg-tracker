@@ -21,14 +21,14 @@ h1{font-family:'Cinzel',serif;font-size:clamp(1.7rem,4.5vw,2.5rem);font-weight:9
 .panel{background:var(--s1);border:1px solid var(--bdr);border-radius:2px;padding:22px 24px;margin-bottom:12px;position:relative}
 .panel::before{content:'';position:absolute;top:-1px;left:16px;right:16px;height:2px;background:linear-gradient(to right,transparent,var(--gold),transparent)}
 .lbl{font-family:'Cinzel',serif;font-size:.64rem;letter-spacing:.2em;color:var(--gold);text-transform:uppercase;margin-bottom:8px}
-input[type=text]{background:var(--s2);border:1px solid var(--bdr);border-radius:2px;color:var(--txt);font-family:'Crimson Pro',serif;font-size:.95rem;padding:8px 12px;outline:none;transition:border-color .2s;width:100%}
-input[type=text]:focus{border-color:var(--gold)}
-input[type=text]::placeholder{color:var(--mut)}
+input[type=text],input[type=password]{background:var(--s2);border:1px solid var(--bdr);border-radius:2px;color:var(--txt);font-family:'Crimson Pro',serif;font-size:.95rem;padding:8px 12px;outline:none;transition:border-color .2s;width:100%}
+input[type=text]:focus,input[type=password]:focus{border-color:var(--gold)}
+input::placeholder{color:var(--mut)}
 .row-url{display:flex;gap:8px;margin-bottom:16px}.row-url input{flex:1}
 .pgrid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
 @media(max-width:540px){.pgrid{grid-template-columns:1fr}}
 .prow{display:flex;gap:5px}.prow input{flex:1}
-.btnx{background:transparent;border:1px solid rgba(207,102,121,.2);color:var(--mut);width:30px;flex-shrink:0;cursor:pointer;border-radius:2px;font-size:.95rem;transition:all .15s}
+.btnx{background:transparent;border:1px solid rgba(207,102,121,.2);color:var(--mut);width:30px;flex-shrink:0;cursor:pointer;border-radius:2px;font-size:.95rem}
 .btnx:hover{background:rgba(207,102,121,.15);color:var(--loss)}
 .ctrl{display:flex;align-items:center;gap:12px;margin-top:14px;flex-wrap:wrap}
 .btnadd{background:transparent;border:1px solid var(--bdr);color:var(--gold);font-family:'Cinzel',serif;font-size:.67rem;letter-spacing:.1em;padding:8px 14px;cursor:pointer;border-radius:2px}
@@ -81,6 +81,10 @@ input[type=text]::placeholder{color:var(--mut)}
 .dbgbtn{font-size:.68rem;color:var(--mut);background:none;border:none;cursor:pointer;text-decoration:underline}
 .dbgbox{display:none;background:var(--s2);border:1px solid rgba(201,168,76,.1);border-radius:2px;padding:10px 14px;margin-bottom:12px;font-family:monospace;font-size:.71rem;color:var(--mut);max-height:200px;overflow-y:auto;white-space:pre-wrap;word-break:break-all}
 .dbgbox.on{display:block}
+.apirow{display:flex;gap:8px;align-items:center;margin-bottom:14px}
+.apirow input{flex:1}
+.apilbl{font-family:'Cinzel',serif;font-size:.58rem;letter-spacing:.15em;color:var(--mut);white-space:nowrap}
+.apidesc{font-size:.78rem;color:var(--mut);margin-top:4px;font-style:italic}
 </style>
 </head>
 <body>
@@ -92,6 +96,15 @@ input[type=text]::placeholder{color:var(--mut)}
     <div class="tid" id="tid-lbl">Turin RC 2026 &middot; #392336</div>
     <div class="orn" style="margin-top:10px"><div class="oline"></div><div class="diam"></div><div class="oline"></div></div>
   </header>
+
+  <div class="panel">
+    <div class="lbl">Anthropic API Key</div>
+    <div class="apirow">
+      <input type="password" id="apikey" placeholder="sk-ant-..." autocomplete="off">
+    </div>
+    <div class="apidesc">Wird nur lokal im Browser gespeichert. <a href="https://console.anthropic.com/" target="_blank" style="color:var(--gold)">console.anthropic.com</a> &rarr; API Keys &rarr; Create Key</div>
+  </div>
+
   <div class="panel">
     <div class="lbl">Turnier URL</div>
     <div class="row-url">
@@ -107,12 +120,15 @@ input[type=text]::placeholder{color:var(--mut)}
       <button class="dbgbtn" onclick="document.getElementById('dbgbox').classList.toggle('on')">debug</button>
     </div>
   </div>
+
   <div class="dbgbox" id="dbgbox"></div>
-  <div class="sbar" id="sbar"><div class="sdot id"></div><span>Turnier-URL und Spielernamen eingeben, dann Laden klicken</span></div>
+  <div class="sbar" id="sbar"><div class="sdot id"></div><span>API Key eingeben, dann Turnier-URL und Spielernamen &rarr; Laden</span></div>
+
   <div class="round-section" id="round-section">
     <div class="round-lbl">Runde</div>
     <div class="rtabs" id="rtabs"></div>
   </div>
+
   <div class="cards" id="cards">
     <div class="empty-state"><div class="empty-ico">&#9876;</div><p>Noch keine Daten geladen</p></div>
   </div>
@@ -121,18 +137,37 @@ input[type=text]::placeholder{color:var(--mut)}
 var PROXY='https://mtg-tracker-proxy.leonmuehlenbruch.workers.dev';
 var autoTimer=null,allRounds=[],standingsCache={},activeIdx=null,totalRounds=0,rid=0;
 function gel(id){return document.getElementById(id);}
-function st(type,msg,spin){gel('sbar').innerHTML=spin?'<div class="spin"></div><span>'+msg+'</span>':'<div class="sdot '+type+'"></div><span>'+msg+'</span>';}
-function dbg(s){gel('dbgbox').textContent=(typeof s==='object'?JSON.stringify(s,null,2):String(s)).slice(0,3000);}
+function st(t,m,s){gel('sbar').innerHTML=s?'<div class="spin"></div><span>'+m+'</span>':'<div class="sdot '+t+'"></div><span>'+m+'</span>';}
+function dbg(s){gel('dbgbox').textContent=(typeof s==='object'?JSON.stringify(s,null,2):String(s)).slice(0,4000);}
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function getTid(url){var m=(url||'').trim().match(/\/(\d+)\/?$/);return m?m[1]:null;}
 function names(){return Array.from(document.querySelectorAll('#pgrid input[type=text]')).map(function(i){return i.value.trim();}).filter(Boolean);}
-gel('turl').addEventListener('input',function(){var id=getTid(gel('turl').value);var map={'392336':'Turin RC 2026','392401':'Lyon Spotlight 2026'};if(id)gel('tid-lbl').textContent=(map[id]||'Turnier')+' \u00b7 #'+id;});
+function getKey(){return gel('apikey').value.trim();}
+
+// Persist API key in localStorage
+window.addEventListener('load',function(){
+  var k=localStorage.getItem('anthropic_key');
+  if(k)gel('apikey').value=k;
+});
+gel('apikey') && gel('apikey').addEventListener('change',function(){
+  if(this.value.trim())localStorage.setItem('anthropic_key',this.value.trim());
+});
+
+gel('turl').addEventListener('input',function(){
+  var id=getTid(gel('turl').value);
+  var map={'392336':'Turin RC 2026','392401':'Lyon Spotlight 2026'};
+  if(id)gel('tid-lbl').textContent=(map[id]||'Turnier')+' \u00b7 #'+id;
+});
+
 function addRow(v){v=v||'';var c=gel('pgrid'),id=++rid,d=document.createElement('div');d.className='prow';d.id='r'+id;d.innerHTML='<input type="text" placeholder="Name (wie auf melee.gg)" value="'+esc(v)+'" onkeydown="if(event.key===\'Enter\')init()"><button class="btnx" onclick="document.getElementById(\'r'+id+'\').remove()">\u00d7</button>';c.appendChild(d);if(!v)setTimeout(function(){var inp=d.querySelector('input');if(inp)inp.focus();},10);}
+
 async function pf(path,opts){return fetch(PROXY+path,opts||{});}
+
 async function init(){
   var tid=getTid(gel('turl').value);
   if(!tid){st('er','Ungueltige Turnier-URL');return;}
   if(!names().length){st('er','Bitte mindestens einen Spielernamen eingeben');return;}
+  if(!getKey()){st('er','Bitte Anthropic API Key eingeben');return;}
   gel('gobtn').disabled=true;
   gel('round-section').style.display='none';
   standingsCache={};allRounds=[];
@@ -141,11 +176,10 @@ async function init(){
     var htmlResp=await pf('/Tournament/View/'+tid);
     if(!htmlResp.ok)throw new Error('Tournament page HTTP '+htmlResp.status);
     var html=await htmlResp.text();
-    dbg('HTML length: '+html.length);
     var pat=/data-id="(\d+)"\s+data-name="([^"]+)"\s+data-is-completed="([^"]+)"/g,m;
     while((m=pat.exec(html))!==null)allRounds.push({id:m[1],label:m[2],done:m[3].toLowerCase()==='true'});
-    dbg('Rounds: '+allRounds.length+'\n'+allRounds.map(function(r){return r.id+' '+r.label;}).join('\n'));
-    if(!allRounds.length){st('id','Keine Runden - Turnier hat noch nicht begonnen');gel('cards').innerHTML='<div class="empty-state"><div class="empty-ico">&#8987;</div><p>Das Turnier hat noch nicht begonnen</p></div>';return;}
+    dbg('Rounds found: '+allRounds.length+'\n'+allRounds.map(function(r){return r.id+' '+r.label;}).join('\n'));
+    if(!allRounds.length){st('id','Keine Runden gefunden');gel('cards').innerHTML='<div class="empty-state"><p>Das Turnier hat noch nicht begonnen</p></div>';return;}
     var playoffs=['Quarterfinals','Semifinals','Finals'];
     totalRounds=allRounds.filter(function(r){return!playoffs.includes(r.label);}).length;
     renderTabs();
@@ -156,37 +190,51 @@ async function init(){
   }catch(e){
     st('er','Fehler: '+e.message);
     dbg('Error: '+e.message+'\n'+(e.stack||''));
-    gel('cards').innerHTML='<div class="empty-state"><div class="empty-ico">&#9888;</div><p>'+esc(e.message)+'</p></div>';
+    gel('cards').innerHTML='<div class="empty-state"><p>'+esc(e.message)+'</p></div>';
   }finally{gel('gobtn').disabled=false;}
 }
+
 function renderTabs(){gel('rtabs').innerHTML=allRounds.map(function(r,i){return'<button class="rtab'+(r.done?' done':'')+'" id="rtab'+i+'" onclick="selectRound('+i+')">'+esc(r.label)+'</button>';}).join('');}
+
 async function selectRound(idx){
   activeIdx=idx;
   document.querySelectorAll('.rtab').forEach(function(el,i){el.classList.toggle('active',i===idx);});
   var round=allRounds[idx];
   if(!standingsCache[round.id]){
-    st('ld','Lade Standings \u00b7 '+round.label+'...',true);
+    st('ld','Claude sucht Standings \u00b7 '+round.label+'... (20-30 Sek)',true);
     try{
-      var resp=await pf('/Standing/GetRoundStandings',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded; charset=UTF-8'},body:'draw=1&start=0&length=3000&order%5B0%5D%5Bcolumn%5D=0&order%5B0%5D%5Bdir%5D=asc&roundId='+round.id});
+      var tid=getTid(gel('turl').value);
+      var ns=names().join(', ');
+      var resp=await pf('/Standing/GetRoundStandings',{
+        method:'POST',
+        headers:{
+          'Content-Type':'application/x-www-form-urlencoded; charset=UTF-8',
+          'X-Api-Key':getKey()
+        },
+        body:'roundId='+round.id+'&tid='+tid+'&playerNames='+encodeURIComponent(ns)
+      });
       var text=await resp.text();
-      dbg('Standings ['+round.id+']:\n'+text.slice(0,600));
-      var data;try{data=JSON.parse(text);}catch(e2){throw new Error('Kein JSON: '+text.slice(0,100));}
-      if(data.Error)throw new Error(data.Message||'melee.gg API Fehler');
+      dbg('Response ['+round.id+']:\n'+text.slice(0,800));
+      var data;try{data=JSON.parse(text);}catch(e2){throw new Error('Kein JSON: '+text.slice(0,150));}
+      if(data.Error||data.error)throw new Error(data.Message||data.error||'API Fehler');
       standingsCache[round.id]=data.data||data.Data||[];
-    }catch(e){st('er','Fehler: '+e.message);dbg('Standings error: '+e.message);return;}
+    }catch(e){st('er','Fehler: '+e.message);dbg('Error: '+e.message);return;}
   }
   renderCards(round);
 }
+
 function renderCards(round){
   var standings=standingsCache[round.id]||[];
   var watched=names().map(function(n){return n.toLowerCase().trim();});
-  if(!standings.length){st('id',round.label+': Noch keine Standings');gel('cards').innerHTML='<div class="empty-state"><p>Keine Daten fuer '+esc(round.label)+'</p></div>';return;}
+  if(!standings.length){st('id',round.label+': Keine Daten');gel('cards').innerHTML='<div class="empty-state"><p>Keine Daten</p></div>';return;}
   var results=watched.map(function(wname){var hit=standings.find(function(s){var n=getName(s).toLowerCase();return n===wname||n.includes(wname)||wname.includes(n)||(n.split(' ').pop()===wname.split(' ').pop()&&wname.split(' ').pop().length>2);});return{wname:wname,standing:hit||null};});
   var found=results.filter(function(r){return r.standing;}).length;
-  st('ok',round.label+' \u00b7 '+found+'/'+watched.length+' Spieler \u00b7 '+standings.length+' Teilnehmer');
+  st('ok',round.label+' \u00b7 '+found+'/'+watched.length+' Spieler \u00b7 '+standings.length+' total');
   gel('cards').innerHTML=results.map(function(r,i){return makeCard(r,i,round);}).join('');
 }
+
 function getName(s){if(s.Team&&s.Team.Players&&s.Team.Players[0])return s.Team.Players[0].DisplayName||s.Team.Players[0].Name||'';if(s.Players&&s.Players[0])return s.Players[0].DisplayName||s.Players[0].Name||'';return s.Name||s.PlayerName||s.DisplayName||s.TeamName||'';}
+
 function makeCard(obj,idx,round){
   var wname=obj.wname,s=obj.standing,delay=idx*60;
   if(!s)return'<div class="pcard" style="animation-delay:'+delay+'ms"><div class="pch"><div class="pn">'+esc(wname)+'</div></div><div class="nf">Nicht in '+esc(round.label)+' gefunden</div></div>';
@@ -208,14 +256,16 @@ function makeCard(obj,idx,round){
   var pending='';for(var i=0;i<Math.max(0,totalRounds-hist.length);i++)pending+='<div class="pip-cur"></div>';
   var meta='';
   if(pts!=null)meta+='<div class="mi"><span class="mk">Punkte</span><span class="mv">'+pts+'</span></div>';
-  if(mr)meta+='<div class="mi"><span class="mk">Match Record</span><span class="mv">'+esc(mr)+'</span></div>';
-  if(gr)meta+='<div class="mi"><span class="mk">Game Record</span><span class="mv">'+esc(gr)+'</span></div>';
+  if(mr)meta+='<div class="mi"><span class="mk">Match</span><span class="mv">'+esc(mr)+'</span></div>';
+  if(gr)meta+='<div class="mi"><span class="mk">Games</span><span class="mv">'+esc(gr)+'</span></div>';
   if(omwp!=null)meta+='<div class="mi"><span class="mk">OMW%</span><span class="mv">'+(omwp*100).toFixed(1)+'%</span></div>';
   if(gwp!=null)meta+='<div class="mi"><span class="mk">GW%</span><span class="mv">'+(gwp*100).toFixed(1)+'%</span></div>';
   if(ogwp!=null)meta+='<div class="mi"><span class="mk">OGW%</span><span class="mv">'+(ogwp*100).toFixed(1)+'%</span></div>';
   return'<div class="pcard" style="animation-delay:'+delay+'ms"><div class="pch"><div><div class="pn">'+esc(name)+'</div>'+(rank!=null?'<div class="pr">Rang #'+rank+'</div>':'')+'</div><div class="bdgs">'+dayBadge+'<span class="b bw">'+wins+'W</span><span class="b bl">'+losses+'L</span>'+(draws>0?'<span class="b bdr2">'+draws+'D</span>':'')+'</div></div><div class="pcb">'+(meta?'<div class="meta">'+meta+'</div>':'')+((pips||pending)?'<div class="hist">'+pips+pending+'</div>':'')+'</div></div>';
 }
+
 function toggleAuto(){clearInterval(autoTimer);if(gel('autocb').checked)autoTimer=setInterval(function(){if(names().length){standingsCache={};init();}},300000);}
+
 addRow();addRow();addRow();
 </script>
 </body>
