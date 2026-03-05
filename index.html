@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MTG Tournament Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --gold:#c9a84c; --gold-l:#e8c97a; --gold-d:#8b6914;
+  --bg:#0a0a0f; --s1:#111118; --s2:#1a1a24; --s3:#22222e;
+  --bdr:rgba(201,168,76,.22); --txt:#e8e0d0; --mut:#7a7060;
+  --win:#4caf82; --loss:#cf6679; --draw:#7a9ccf; --warn:#e8a84c;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--txt);font-family:'Crimson Pro',Georgia,serif;min-height:100vh}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(ellipse at 15% 15%,rgba(201,168,76,.05) 0%,transparent 55%),
+             radial-gradient(ellipse at 85% 85%,rgba(80,40,160,.06) 0%,transparent 55%)}
+.wrap{position:relative;z-index:1;max-width:960px;margin:0 auto;padding:36px 18px 80px}
+header{text-align:center;margin-bottom:38px}
+.orn{display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:10px}
+.oline{flex:1;height:1px;background:linear-gradient(to right,transparent,var(--gold),transparent);max-width:110px}
+.diam{width:7px;height:7px;background:var(--gold);transform:rotate(45deg)}
+h1{font-family:'Cinzel',serif;font-size:clamp(1.7rem,4.5vw,2.5rem);font-weight:900;letter-spacing:.08em;color:var(--gold-l);text-shadow:0 0 40px rgba(201,168,76,.3)}
+.sub{font-style:italic;color:var(--mut);font-size:.96rem;margin-top:4px}
+.tid{font-family:'Cinzel',serif;font-size:.66rem;letter-spacing:.18em;color:var(--gold);margin-top:3px;opacity:.85}
+.panel{background:var(--s1);border:1px solid var(--bdr);border-radius:2px;padding:22px 24px;margin-bottom:12px;position:relative}
+.panel::before{content:'';position:absolute;top:-1px;left:16px;right:16px;height:2px;background:linear-gradient(to right,transparent,var(--gold),transparent)}
+.lbl{font-family:'Cinzel',serif;font-size:.64rem;letter-spacing:.2em;color:var(--gold);text-transform:uppercase;margin-bottom:8px}
+input[type=text]{background:var(--s2);border:1px solid var(--bdr);border-radius:2px;color:var(--txt);font-family:'Crimson Pro',serif;font-size:.95rem;padding:8px 12px;outline:none;transition:border-color .2s;width:100%}
+input[type=text]:focus{border-color:var(--gold)}
+input[type=text]::placeholder{color:var(--mut)}
+.row-url{display:flex;gap:8px;margin-bottom:16px}
+.row-url input{flex:1}
+.pgrid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+@media(max-width:540px){.pgrid{grid-template-columns:1fr}}
+.prow{display:flex;gap:5px}
+.prow input{flex:1}
+.btnx{background:transparent;border:1px solid rgba(207,102,121,.2);color:var(--mut);width:30px;flex-shrink:0;cursor:pointer;border-radius:2px;font-size:.95rem;transition:all .15s}
+.btnx:hover{background:rgba(207,102,121,.15);color:var(--loss)}
+.ctrl{display:flex;align-items:center;gap:12px;margin-top:14px;flex-wrap:wrap}
+.btnadd{background:transparent;border:1px solid var(--bdr);color:var(--gold);font-family:'Cinzel',serif;font-size:.67rem;letter-spacing:.1em;padding:8px 14px;cursor:pointer;border-radius:2px;transition:all .15s}
+.btnadd:hover{background:rgba(201,168,76,.1)}
+.btngo{background:linear-gradient(135deg,var(--gold-d),var(--gold));border:none;color:var(--bg);font-family:'Cinzel',serif;font-size:.76rem;font-weight:700;letter-spacing:.14em;padding:10px 24px;cursor:pointer;border-radius:2px;transition:all .2s}
+.btngo:hover:not(:disabled){background:linear-gradient(135deg,var(--gold),var(--gold-l));box-shadow:0 4px 18px rgba(201,168,76,.3)}
+.btngo:disabled{opacity:.45;cursor:not-allowed}
+.autolbl{display:flex;align-items:center;gap:6px;font-size:.85rem;color:var(--mut);cursor:pointer}
+.autolbl input{accent-color:var(--gold)}
+.ts{margin-left:auto;font-size:.78rem;color:var(--mut);font-style:italic}
+.sbar{display:flex;align-items:center;gap:9px;padding:10px 15px;background:var(--s2);border:1px solid var(--bdr);border-radius:2px;margin-bottom:18px;font-size:.88rem;color:var(--mut);min-height:40px}
+.spin{width:13px;height:13px;border:2px solid rgba(201,168,76,.2);border-top-color:var(--gold);border-radius:50%;animation:sp .8s linear infinite;flex-shrink:0}
+@keyframes sp{to{transform:rotate(360deg)}}
+.sdot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.sdot.ok{background:var(--win)}.sdot.er{background:var(--loss)}.sdot.id{background:var(--mut)}.sdot.ld{background:var(--warn)}
+.round-section{margin-bottom:18px;display:none}
+.round-lbl{font-family:'Cinzel',serif;font-size:.64rem;letter-spacing:.18em;color:var(--mut);text-transform:uppercase;margin-bottom:8px}
+.rtabs{display:flex;gap:5px;flex-wrap:wrap}
+.rtab{font-family:'Cinzel',serif;font-size:.64rem;letter-spacing:.09em;padding:6px 11px;border:1px solid var(--bdr);background:transparent;color:var(--mut);cursor:pointer;border-radius:2px;transition:all .15s;white-space:nowrap}
+.rtab:hover{border-color:var(--gold);color:var(--gold)}
+.rtab.done{color:var(--txt);border-color:rgba(201,168,76,.38)}
+.rtab.active{background:rgba(201,168,76,.14);border-color:var(--gold);color:var(--gold-l)}
+.cards{display:grid;gap:11px}
+.pcard{background:var(--s1);border:1px solid var(--bdr);border-radius:2px;overflow:hidden;animation:fu .3s ease forwards;opacity:0;transform:translateY(8px)}
+@keyframes fu{to{opacity:1;transform:translateY(0)}}
+.pch{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;padding:13px 18px;border-bottom:1px solid var(--bdr);background:linear-gradient(to right,rgba(201,168,76,.06),transparent)}
+.pn{font-family:'Cinzel',serif;font-size:.96rem;font-weight:700;color:var(--gold-l)}
+.pr{font-family:'Cinzel',serif;font-size:.61rem;letter-spacing:.13em;color:var(--mut);margin-top:2px}
+.bdgs{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.b{font-family:'Cinzel',serif;font-size:.66rem;font-weight:700;padding:3px 9px;border-radius:1px;letter-spacing:.08em}
+.bd1{background:rgba(201,168,76,.1);color:var(--gold);border:1px solid rgba(201,168,76,.28)}
+.bd2{background:rgba(76,175,130,.1);color:var(--win);border:1px solid rgba(76,175,130,.28)}
+.bout{background:rgba(207,102,121,.07);color:var(--mut);border:1px solid rgba(207,102,121,.18)}
+.bw{background:rgba(76,175,130,.1);color:var(--win);border:1px solid rgba(76,175,130,.28)}
+.bl{background:rgba(207,102,121,.1);color:var(--loss);border:1px solid rgba(207,102,121,.28)}
+.bdr2{background:rgba(122,156,207,.1);color:var(--draw);border:1px solid rgba(122,156,207,.28)}
+.pcb{padding:11px 18px}
+.meta{display:flex;gap:16px;flex-wrap:wrap;font-size:.85rem}
+.mi{display:flex;flex-direction:column;gap:1px}
+.mk{font-family:'Cinzel',serif;font-size:.58rem;letter-spacing:.12em;color:var(--mut);text-transform:uppercase}
+.mv{font-weight:600}
+.mvw{color:var(--win)}.mvl{color:var(--loss)}.mvd{color:var(--draw)}
+.hist{margin-top:8px;display:flex;gap:3px;flex-wrap:wrap;align-items:center}
+.pip{width:18px;height:18px;border-radius:2px;display:flex;align-items:center;justify-content:center;font-size:.57rem;font-weight:700;font-family:'Cinzel',serif}
+.pip.W{background:rgba(76,175,130,.16);color:var(--win);border:1px solid rgba(76,175,130,.32)}
+.pip.L{background:rgba(207,102,121,.16);color:var(--loss);border:1px solid rgba(207,102,121,.32)}
+.pip.D{background:rgba(122,156,207,.16);color:var(--draw);border:1px solid rgba(122,156,207,.32)}
+.pip-cur{width:18px;height:18px;border-radius:2px;border:1px dashed rgba(201,168,76,.4);background:rgba(201,168,76,.05)}
+.nf{padding:12px 18px;font-style:italic;color:var(--mut);font-size:.87rem}
+.empty-state{text-align:center;padding:50px 20px;color:var(--mut)}
+.empty-ico{font-size:2.4rem;margin-bottom:10px;opacity:.3}
+.dbgbtn{font-size:.68rem;color:var(--mut);background:none;border:none;cursor:pointer;text-decoration:underline;text-underline-offset:2px}
+.dbgbtn:hover{color:var(--gold)}
+.dbgbox{display:none;background:var(--s2);border:1px solid rgba(201,168,76,.1);border-radius:2px;padding:10px 14px;margin-bottom:12px;font-family:monospace;font-size:.71rem;color:var(--mut);max-height:200px;overflow-y:auto;white-space:pre-wrap;word-break:break-all}
+.dbgbox.on{display:block}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="orn"><div class="oline"></div><div class="diam"></div><div class="oline"></div></div>
+    <h1>MTG TOURNAMENT TRACKER</h1>
+    <div class="sub">Live Standings · melee.gg</div>
+    <div class="tid" id="tid-lbl">Turin RC 2026 · #392336</div>
+    <div class="orn" style="margin-top:10px"><div class="oline"></div><div class="diam"></div><div class="oline"></div></div>
+  </header>
+
+  <div class="panel">
+    <div class="lbl">Turnier URL</div>
+    <div class="row-url">
+      <input type="text" id="turl" value="https://melee.gg/Tournament/View/392336" placeholder="https://melee.gg/Tournament/View/...">
+    </div>
+    <div class="lbl">Spieler verfolgen</div>
+    <div class="pgrid" id="pgrid"></div>
+    <div class="ctrl">
+      <button class="btnadd" onclick="addRow()">+ Spieler</button>
+      <button class="btngo" id="gobtn" onclick="init()">⚔ Laden</button>
+      <label class="autolbl"><input type="checkbox" id="autocb" onchange="toggleAuto()"> Auto (5min)</label>
+      <span class="ts" id="ts"></span>
+      <button class="dbgbtn" onclick="document.getElementById('dbgbox').classList.toggle('on')">debug</button>
+    </div>
+  </div>
+
+  <div class="dbgbox" id="dbgbox"></div>
+  <div class="sbar" id="sbar"><div class="sdot id"></div><span>Turnier-URL eingeben, Spielernamen eintragen und auf „Laden" klicken</span></div>
+
+  <div class="round-section" id="round-section">
+    <div class="round-lbl">Runde wählen</div>
+    <div class="rtabs" id="rtabs"></div>
+  </div>
+
+  <div class="cards" id="cards">
+    <div class="empty-state"><div class="empty-ico">⚔</div><p>Noch keine Daten geladen</p></div>
+  </div>
+</div>
+
+<script>
+const BASE = 'https://melee.gg';
+let rid=0, autoTimer=null, tourneyData=null, allRounds=[], standingsCache={}, activeRoundIdx=null;
+const $=id=>document.getElementById(id);
+function st(type,msg,spin=false){$('sbar').innerHTML=spin?`<div class="spin"></div><span>${msg}</span>`:`<div class="sdot ${type}"></div><span>${msg}</span>`}
+function dbg(s){$('dbgbox').textContent=typeof s==='object'?JSON.stringify(s,null,2):s}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function getTid(url){const m=url.trim().match(/\/(\d+)\/?$/);return m?m[1]:null}
+function names(){return[...document.querySelectorAll('#pgrid input[type=text]')].map(i=>i.value.trim()).filter(Boolean)}
+
+$('turl').addEventListener('input',updateLabel);
+function updateLabel(){const id=getTid($('turl').value);const map={'392336':'Turin RC 2026','392401':'Lyon Spotlight 2026'};if(id)$('tid-lbl').textContent=`${map[id]||'Turnier'} · #${id}`}
+
+function addRow(v=''){
+  const c=$('pgrid'),id=++rid,d=document.createElement('div');
+  d.className='prow';d.id=`r${id}`;
+  d.innerHTML=`<input type="text" placeholder="Name (wie auf melee.gg)" value="${esc(v)}" id="p${id}" onkeydown="if(event.key==='Enter')init()"><button class="btnx" onclick="document.getElementById('r${id}').remove()">×</button>`;
+  c.appendChild(d);
+  if(!v)setTimeout(()=>document.getElementById(`p${id}`)?.focus(),10);
+}
+
+async function apiFetch(path){
+  const r=await fetch(BASE+path,{headers:{'Accept':'application/json'}});
+  if(!r.ok)throw new Error(`HTTP ${r.status}: ${BASE+path}`);
+  return r.json();
+}
+
+async function init(){
+  const url=$('turl').value.trim(),tid=getTid(url);
+  if(!tid){st('er','Ungültige Turnier-URL');return}
+  if(!names().length){st('er','Bitte mindestens einen Spielernamen eingeben');return}
+  $('gobtn').disabled=true;
+  $('round-section').style.display='none';
+  standingsCache={};allRounds=[];
+  try{
+    st('ld','Lade Turnierstruktur…',true);
+    tourneyData=await apiFetch(`/Tournament/Tournament/${tid}`);
+    dbg('Tournament:\n'+JSON.stringify(tourneyData,null,2).slice(0,3000));
+    buildRounds(tourneyData);
+    if(!allRounds.length){
+      st('id','Keine Runden gefunden — Turnier hat noch nicht begonnen');
+      $('cards').innerHTML=`<div class="empty-state"><div class="empty-ico">⏳</div><p>Das Turnier hat noch keine abgeschlossenen Runden</p></div>`;
+      return;
+    }
+    renderRoundTabs();
+    $('round-section').style.display='block';
+    const latestDone=allRounds.reduce((best,r,i)=>r.done?i:best,0);
+    await selectRound(latestDone);
+    $('ts').textContent=`Stand: ${new Date().toLocaleTimeString('de-DE')}`;
+  }catch(e){
+    st('er',`Fehler: ${e.message}`);
+    dbg('ERROR:\n'+e.message+'\n\n'+(e.stack||''));
+    $('cards').innerHTML=`<div class="empty-state"><div class="empty-ico">⚠</div><p style="max-width:400px;margin:0 auto">${esc(e.message)}</p></div>`;
+  }finally{$('gobtn').disabled=false}
+}
+
+function buildRounds(t){
+  allRounds=[];
+  const phases=t.Phases||t.phases||t.TournamentPhases||t.tournamentPhases||[];
+  if(phases.length){
+    phases.forEach(phase=>{
+      const phaseId=phase.PhaseId||phase.Id||phase.id||phase.phaseId;
+      const phaseName=phase.Name||phase.PhaseName||phase.name||'Swiss';
+      const rounds=phase.Rounds||phase.rounds||[];
+      rounds.forEach(round=>{
+        const rn=round.RoundNumber||round.Number||round.roundNumber||(allRounds.length+1);
+        const done=round.IsComplete||round.Complete||round.Ended||round.IsEnded||round.Status==='Complete'||round.Status==='Ended'||false;
+        allRounds.push({label:phases.length>1?`${phaseName} R${rn}`:`Runde ${rn}`,phaseId,roundNum:rn,roundId:round.RoundId||round.Id||round.id,done});
+      });
+    });
+  }
+  if(!allRounds.length){
+    const flat=t.Rounds||t.rounds||[];
+    const phaseId=t.PhaseId||t.phaseId||(phases[0]&&(phases[0].PhaseId||phases[0].Id));
+    flat.forEach((round,ri)=>{
+      const rn=round.RoundNumber||round.Number||(ri+1);
+      allRounds.push({label:`Runde ${rn}`,phaseId,roundNum:rn,roundId:round.RoundId||round.Id,done:true});
+    });
+  }
+}
+
+function renderRoundTabs(){
+  $('rtabs').innerHTML=allRounds.map((r,i)=>`<button class="rtab ${r.done?'done':''}" id="rtab${i}" onclick="selectRound(${i})">${esc(r.label)}</button>`).join('');
+}
+
+async function selectRound(idx){
+  activeRoundIdx=idx;
+  document.querySelectorAll('.rtab').forEach((el,i)=>el.classList.toggle('active',i===idx));
+  const round=allRounds[idx];
+  if(!round?.phaseId){st('er','Keine Phase-ID für diese Runde');return}
+  if(!standingsCache[round.phaseId]){
+    st('ld',`Lade Standings · ${round.label}…`,true);
+    try{
+      const data=await apiFetch(`/Tournament/PhaseStandings/${round.phaseId}`);
+      standingsCache[round.phaseId]=Array.isArray(data)?data:(data.Standings||data.standings||[]);
+      dbg('Standings[0]:\n'+JSON.stringify(standingsCache[round.phaseId]?.[0],null,2));
+    }catch(e){
+      st('er',`Standings-Fehler: ${e.message}`);
+      dbg('Standings error:\n'+e.message);
+      return;
+    }
+  }
+  renderCards(round);
+}
+
+function renderCards(round){
+  const standings=standingsCache[round.phaseId]||[];
+  const watched=names().map(n=>n.toLowerCase().trim());
+  if(!standings.length){
+    st('id',`${round.label}: Noch keine Standings veröffentlicht`);
+    $('cards').innerHTML=`<div class="empty-state"><div class="empty-ico">⏳</div><p>Noch keine Standings für ${esc(round.label)}</p></div>`;
+    return;
+  }
+  const results=watched.map(wname=>{
+    const hit=standings.find(s=>{
+      const n=pName(s).toLowerCase();
+      return n===wname||n.includes(wname)||wname.includes(n)||(n.split(' ').pop()===wname.split(' ').pop()&&wname.split(' ').pop().length>2);
+    });
+    return{wname,standing:hit||null};
+  });
+  const found=results.filter(r=>r.standing).length;
+  st('ok',`${round.label} · ${found}/${watched.length} Spieler gefunden · ${standings.length} Spieler total`);
+  $('cards').innerHTML=results.map((r,i)=>playerCard(r,i,round,standings.length)).join('');
+}
+
+function pName(s){return s?.Name||s?.PlayerName||s?.TeamName||s?.DisplayName||s?.Player?.Name||s?.player?.name||''}
+
+function playerCard({wname,standing},idx,round,total){
+  const delay=idx*60;
+  if(!standing)return`<div class="pcard" style="animation-delay:${delay}ms"><div class="pch"><div><div class="pn">${esc(wname)}</div></div></div><div class="nf">Nicht in den Standings von ${esc(round.label)} gefunden</div></div>`;
+  const s=standing;
+  const name=pName(s),rank=s.Rank??s.Standing??s.Place??s.Position??null,pts=s.Points??s.MatchPoints??s.Score??null;
+  const wins=s.Wins??s.MatchWins??s.W??0,losses=s.Losses??s.MatchLosses??s.L??0,draws=s.Draws??s.MatchDraws??s.D??0;
+  const omwp=s.OpponentMatchWinPercentage??s.OMWP??s.Omwp??null,gwp=s.GameWinPercentage??s.GWP??s.Gwp??null;
+  const adv=s.AdvancedToNextPhase??s.InNextPhase??false;
+  const totalRounds=allRounds.filter(r=>r.phaseId===round.phaseId).length;
+  const dayBadge=adv?`<span class="b bd2">Tag 2 ✓</span>`:losses>=3?`<span class="b bout">Ausgeschieden</span>`:`<span class="b bd1">Tag 1</span>`;
+  const history=buildHistory(s,wins,losses,draws);
+  const pips=history.map(r=>`<div class="pip ${r}">${r}</div>`).join('');
+  const pending=Array(Math.max(0,totalRounds-history.length)).fill(0).map(()=>`<div class="pip-cur"></div>`).join('');
+  return`<div class="pcard" style="animation-delay:${delay}ms">
+    <div class="pch"><div><div class="pn">${esc(name)}</div>${rank!=null?`<div class="pr">Rang #${rank} von ${total}</div>`:''}</div>
+    <div class="bdgs">${dayBadge}<span class="b bw">${wins}W</span><span class="b bl">${losses}L</span>${draws>0?`<span class="b bdr2">${draws}D</span>`:''}</div></div>
+    <div class="pcb"><div class="meta">
+      ${pts!=null?`<div class="mi"><span class="mk">Punkte</span><span class="mv">${pts}</span></div>`:''}
+      <div class="mi"><span class="mk">Siege</span><span class="mv mvw">${wins}</span></div>
+      <div class="mi"><span class="mk">Niederlagen</span><span class="mv mvl">${losses}</span></div>
+      ${draws>0?`<div class="mi"><span class="mk">Unentschieden</span><span class="mv mvd">${draws}</span></div>`:''}
+      ${omwp!=null?`<div class="mi"><span class="mk">OMW%</span><span class="mv">${(omwp*100).toFixed(1)}%</span></div>`:''}
+      ${gwp!=null?`<div class="mi"><span class="mk">GW%</span><span class="mv">${(gwp*100).toFixed(1)}%</span></div>`:''}
+    </div>${(pips||pending)?`<div class="hist">${pips}${pending}</div>`:''}</div></div>`;
+}
+
+function buildHistory(s,w,l,d){
+  const arr=s.Results||s.RoundResults||s.MatchResults||s.Rounds||s.rounds||[];
+  if(Array.isArray(arr)&&arr.length){
+    return arr.map(r=>{
+      const o=r.Outcome||r.Result||r.MatchResult||r.Winner||r.result||r.outcome||'';
+      const os=String(o).toLowerCase();
+      if(os==='win'||os==='w'||os==='won'||o===1||o==='1')return'W';
+      if(os==='loss'||os==='lose'||os==='lost'||os==='l'||o===0||o==='0')return'L';
+      if(os==='draw'||os==='tied'||os==='d')return'D';
+      return null;
+    }).filter(Boolean);
+  }
+  return[...Array(w).fill('W'),...Array(l).fill('L'),...Array(d).fill('D')];
+}
+
+function toggleAuto(){
+  if($('autocb').checked){autoTimer=setInterval(()=>{if(names().length){standingsCache={};init()}},5*60*1000)}
+  else clearInterval(autoTimer);
+}
+
+addRow();addRow();addRow();
+</script>
+</body>
+</html>
