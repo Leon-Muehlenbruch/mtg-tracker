@@ -4,6 +4,7 @@
 // Starten mit: node server.js
 
 const http = require('http');
+const fs = require('fs');
 const https = require('https');
 const { execSync, exec } = require('child_process');
 
@@ -136,6 +137,20 @@ const server = http.createServer(async (req, res) => {
           res.end(JSON.stringify({ error: e.message }));
         }
       });
+      return;
+    }
+
+    // players.txt - lese lokale Datei
+    if (path === '/players.txt') {
+      const filePath = __dirname + '/players.txt';
+      if (fs.existsSync(filePath)) {
+        const content = fs.readFileSync(filePath, 'utf8');
+        res.writeHead(200, { ...corsHeaders, 'Content-Type': 'text/plain; charset=utf-8' });
+        res.end(content);
+      } else {
+        res.writeHead(404, corsHeaders);
+        res.end('');
+      }
       return;
     }
 
