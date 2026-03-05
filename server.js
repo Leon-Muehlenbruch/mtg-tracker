@@ -29,7 +29,15 @@ async function getBrowser() {
   if (!_browser || !_browser.isConnected()) {
     const { chromium } = require('playwright');
     console.log('  🌐 Starte Browser...');
-    _browser = await chromium.launch({ headless: true });
+    _browser = await chromium.launch({
+      headless: false,  // sichtbarer Browser umgeht Bot-Detection besser
+      args: [
+        '--disable-blink-features=AutomationControlled',
+        '--no-sandbox',
+        '--window-position=-10000,-10000',  // außerhalb des Bildschirms
+        '--window-size=1280,800',
+      ]
+    });
   }
   return _browser;
 }
@@ -76,8 +84,11 @@ async function fetchTournamentHtml(path) {
   const browser = await getBrowser();
   const page = await browser.newPage();
   try {
+    await page.addInitScript(() => {
+      Object.defineProperty(navigator, 'webdriver', { get: () => false });
+    });
     const resp = await page.goto('https://melee.gg' + path, {
-      waitUntil: 'domcontentloaded', timeout: 15000
+      waitUntil: 'domcontentloaded', timeout: 20000
     });
     const body = await page.content();
     const status = resp ? resp.status() : 200;
