@@ -135,7 +135,7 @@ input[type=text]::placeholder{color:var(--mut)}
 </div>
 
 <script>
-const BASE = 'https://melee.gg';
+const BASE = 'https://corsproxy.io/?url=https://melee.gg';
 let rid=0, autoTimer=null, tourneyData=null, allRounds=[], standingsCache={}, activeRoundIdx=null;
 const $=id=>document.getElementById(id);
 function st(type,msg,spin=false){$('sbar').innerHTML=spin?`<div class="spin"></div><span>${msg}</span>`:`<div class="sdot ${type}"></div><span>${msg}</span>`}
