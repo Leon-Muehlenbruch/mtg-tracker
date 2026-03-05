@@ -23,6 +23,17 @@ function ensurePlaywright() {
   }
 }
 
+// Persistenter Browser - wird einmal gestartet und wiederverwendet
+let _browser = null;
+async function getBrowser() {
+  if (!_browser || !_browser.isConnected()) {
+    const { chromium } = require('playwright');
+    console.log('  🌐 Starte Browser...');
+    _browser = await chromium.launch({ headless: true });
+  }
+  return _browser;
+}
+
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
@@ -30,8 +41,7 @@ const corsHeaders = {
 };
 
 async function fetchWithBrowser(tournamentId, roundId) {
-  const { chromium } = require('playwright');
-  const browser = await chromium.launch({ headless: true });
+  const browser = await getBrowser();
   const page = await browser.newPage();
   
   try {
@@ -54,30 +64,29 @@ async function fetchWithBrowser(tournamentId, roundId) {
       return resp.text();
     }, roundId);
 
-    await browser.close();
+    await page.close();
     return result;
   } catch(e) {
-    await browser.close();
+    await page.close();
     throw e;
   }
 }
 
-function fetchTournamentHtml(path) {
-  return new Promise((resolve, reject) => {
-    const options = {
-      hostname: 'melee.gg',
-      path: path,
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36',
-        'Accept': 'text/html,application/xhtml+xml',
-      }
-    };
-    https.get(options, (res) => {
-      let data = '';
-      res.on('data', chunk => data += chunk);
-      res.on('end', () => resolve({ status: res.statusCode, body: data }));
-    }).on('error', reject);
-  });
+async function fetchTournamentHtml(path) {
+  const browser = await getBrowser();
+  const page = await browser.newPage();
+  try {
+    const resp = await page.goto('https://melee.gg' + path, {
+      waitUntil: 'domcontentloaded', timeout: 15000
+    });
+    const body = await page.content();
+    const status = resp ? resp.status() : 200;
+    await page.close();
+    return { status, body };
+  } catch(e) {
+    await page.close();
+    throw e;
+  }
 }
 
 const server = http.createServer(async (req, res) => {
