@@ -243,7 +243,12 @@ function makeCard(obj,idx,round){
 
 function toggleAuto(){clearInterval(autoTimer);if(gel('autocb').checked)autoTimer=setInterval(function(){if(names().length){standingsCache={};init();}},300000);}
 
-addRow();addRow();addRow();
+(async function(){
+  var su=localStorage.getItem('turl');
+  if(su){gel('turl').value=su;gel('turl').dispatchEvent(new Event('input'));}
+  var loaded=await loadPlayersFromFile();
+  if(!loaded){addRow();addRow();addRow();}
+})();
 </script>
 </body>
 </html>
