@@ -97,6 +97,35 @@ input::placeholder{color:var(--mut)}
     <div class="orn" style="margin-top:10px"><div class="oline"></div><div class="diam"></div><div class="oline"></div></div>
   </header>
 
+  <div class="panel">
+    <div class="lbl">Turnier URL</div>
+    <div class="row-url">
+      <input type="text" id="turl" value="https://melee.gg/Tournament/View/392336" placeholder="https://melee.gg/Tournament/View/...">
+    </div>
+    <div class="lbl">Spieler verfolgen</div>
+    <div class="pgrid" id="pgrid"></div>
+    <div class="ctrl">
+      <button class="btnadd" onclick="addRow()">+ Spieler</button>
+      <button class="btngo" id="gobtn" onclick="init()">Laden</button>
+      <label class="autolbl"><input type="checkbox" id="autocb" onchange="toggleAuto()"> Auto (5min)</label>
+      <span class="ts" id="ts"></span>
+      <button class="dbgbtn" onclick="document.getElementById('dbgbox').classList.toggle('on')">debug</button>
+    </div>
+  </div>
+
+  <div class="dbgbox" id="dbgbox"></div>
+  <div class="sbar" id="sbar"><div class="sdot id"></div><span>Turnier-URL und Spielernamen eingeben &rarr; Laden</span></div>
+
+  <div class="round-section" id="round-section">
+    <div class="round-lbl">Runde</div>
+    <div class="rtabs" id="rtabs"></div>
+  </div>
+
+  <div class="cards" id="cards">
+    <div class="empty-state"><div class="empty-ico">&#9876;</div><p>Noch keine Daten geladen</p></div>
+  </div>
+</div>
+
 <script>
 // Nutze lokalen Server falls verfügbar, sonst Cloudflare Worker
 var PROXY='https://mtg-tracker-proxy.leonmuehlenbruch.workers.dev';
